@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  vars: 
+    - tomcat_url: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.tar.gz
+    - tomcat_package: apache-tomcat-8.5.71   
+  tasks:
+  - name: installing java
+    yum:
+      name: java
+      state: present
+  - name: download apache tomcat
+    get_url:
+      url: "{{ tomcat_url }}"
+      dest: /opt
+  - name: unzipping the tar
+    unarchive:
+      src: /opt/{{ tomcat_package }}.tar.gz
+      dest: /opt
+      remote_src: true
+  - name: renaming the file
+    command: mv /opt/{{ tomcat_package }}/ /opt/tomcat
+  - name: starting the apache
+    shell: nohup /opt/tomcat/bin/startup.sh
